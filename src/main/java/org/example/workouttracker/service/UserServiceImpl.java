@@ -41,7 +41,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean existsByUsername(String username) {
-        return userRepository.existsByUsername(username);
+        // Validate if the username exists in the database ignoring the case sensitivity
+        return userRepository.existsByUsernameIgnoreCase(username);
     }
 
     @Override
