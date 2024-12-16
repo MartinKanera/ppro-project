@@ -41,6 +41,11 @@ public class AuthController {
     @PostMapping("/register")
     public String register(@Valid User user, BindingResult bindingResult, HttpServletRequest request) {
 
+        if (userService.existsByUsername(user.getUsername())) {
+            bindingResult.rejectValue("username", "error.user", "Username taken");
+            return "auth/register";
+        }
+
         String originalPassword = user.getPassword();
         userService.save(user);
 
