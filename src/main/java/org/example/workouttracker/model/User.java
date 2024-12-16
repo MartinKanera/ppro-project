@@ -1,6 +1,7 @@
 package org.example.workouttracker.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
@@ -9,8 +10,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(unique = true, nullable = false)
+    @Size(min = 4, max = 32)
     private String username;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 60)
+    @Size(min = 6, max = 60)
     private String password;
     private String role = "USER";
 

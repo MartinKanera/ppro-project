@@ -13,6 +13,7 @@
     </div>
     <div>
       <input type="password" name="password" placeholder="Password" th:field="*{password}" />
+      <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span><br>
     </div>
     <a th:href="@{'/login'}">Log in instead</a>
     <input type="submit" value="Register" />

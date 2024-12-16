@@ -46,6 +46,10 @@ public class AuthController {
             return "auth/register";
         }
 
+        if (bindingResult.hasErrors()) {
+            return "auth/register";
+        }
+
         String originalPassword = user.getPassword();
         userService.save(user);
 
