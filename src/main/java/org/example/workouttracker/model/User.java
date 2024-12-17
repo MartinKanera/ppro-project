@@ -3,6 +3,8 @@ package org.example.workouttracker.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -16,6 +18,9 @@ public class User {
     @Size(min = 6, max = 60)
     private String password;
     private String role = "USER";
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Workout> workouts;
 
     public long getId() {
         return id;
@@ -47,5 +52,13 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public List<Workout> getWorkouts() {
+        return workouts;
+    }
+
+    public void setWorkouts(List<Workout> workouts) {
+        this.workouts = workouts;
     }
 }
