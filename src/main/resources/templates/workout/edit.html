@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${edit ? 'Edit Workout' : 'Create Workout'}"></title>
+</head>
+<body>
+    <form th:action="@{'/workout/save'}" method="post" th:object="${workout}">
+        <input type="hidden" th:field="*{id}">
+        <div>
+            <label for="name">Name</label>
+            <input id="name" type="text" th:field="*{name}" />
+        </div>
+        <input type="submit" value="Save" />
+    </form>
+</body>
+</html>

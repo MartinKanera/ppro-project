@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Workouts</title>
+</head>
+<body>
+    <div>
+        <span>Workouts</span>
+        <a th:href="@{'/workout/create'}">Create workout</a>
+    </div>
+    <ul>
+        <li th:each="workout : ${workouts}">
+            <span th:text="${workout.name}"></span>
+            <a th:href="@{'/workout/edit/' + ${workout.id}}">Edit</a>
+            <a th:href="@{'/workout/delete/' + ${workout.id}}">Delete</a>
+        </li>
+    </ul>
+</body>
+</html>
