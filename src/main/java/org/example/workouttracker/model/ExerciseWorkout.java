@@ -20,7 +20,7 @@ public class ExerciseWorkout {
 
     private Integer sets; // Predefined number of sets
 
-    private Integer index;
+    private Integer index = 0;
 
     // Constructors
     public ExerciseWorkout() {

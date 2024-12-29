@@ -2,6 +2,7 @@ package org.example.workouttracker.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,7 +20,7 @@ public class Workout {
     private User user;
 
     @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL)
-    private List<ExerciseWorkout> exerciseWorkouts;
+    private List<ExerciseWorkout> exerciseWorkouts = new ArrayList<>();
 
     public Workout() {
     }
@@ -54,5 +55,13 @@ public class Workout {
 
     public void setExerciseWorkouts(List<ExerciseWorkout> exerciseWorkouts) {
         this.exerciseWorkouts = exerciseWorkouts;
+    }
+
+    public void addEmptyExerciseWorkout() {
+        ExerciseWorkout exerciseWorkout = new ExerciseWorkout();
+        exerciseWorkout.setWorkout(this);
+        exerciseWorkout.setExercise(new Exercise());
+        exerciseWorkout.setIndex(this.exerciseWorkouts.size());
+        exerciseWorkouts.add(exerciseWorkout);
     }
 }
