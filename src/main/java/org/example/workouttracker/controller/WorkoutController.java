@@ -1,6 +1,7 @@
 package org.example.workouttracker.controller;
 
 import jakarta.validation.Valid;
+import org.example.workouttracker.model.Exercise;
 import org.example.workouttracker.model.Workout;
 import org.example.workouttracker.security.CustomUserDetails;
 import org.example.workouttracker.service.ExerciseService;
@@ -63,9 +64,9 @@ public class WorkoutController {
             Workout workout = new Workout();
             workout.addEmptyExerciseWorkout();
             model.addAttribute("workout", workout);
-            model.addAttribute("existingExercises", exerciseService.getAllExercises());
-            model.addAttribute("edit", false);
         }
+        model.addAttribute("edit", false);
+        model.addAttribute("existingExercises", exerciseService.getAllExercises());
         return "workout/edit";
     }
 
@@ -75,9 +76,9 @@ public class WorkoutController {
         if (!model.containsAttribute("workout")) {
             Workout workout = workoutService.getWorkoutById(id);
             model.addAttribute("workout", workout);
-            model.addAttribute("existingExercises", exerciseService.getAllExercises());
-            model.addAttribute("edit", true);
         }
+        model.addAttribute("edit", true);
+        model.addAttribute("existingExercises", exerciseService.getAllExercises());
         return "workout/edit";
     }
 }

@@ -26,7 +26,10 @@ public class WorkoutServiceImpl implements WorkoutService {
 
     @Override
     public Workout getWorkoutById(long workoutId) {
-        return workoutRepository.findById(workoutId).
+        Workout workout = workoutRepository.findById(workoutId).
                 orElseThrow(() -> new IllegalArgumentException("Invalid workout ID"));
+        workout.sortExerciseWorkouts();
+
+        return workout;
     }
 }

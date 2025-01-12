@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form th:action="@{'/exercise/save'}" method="post" th:object="${exerciseForm}">
+    <input type="hidden" th:field="*{editWorkout}">
+    <th:block th:object="${exerciseForm.workout}">
+        <input type="hidden" th:field="*{id}">
+        <input type="hidden" th:field="*{name}">
+        <th:block th:each="exerciseWorkout, iStat : ${exerciseForm.workout.exerciseWorkouts}">
+            <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].id}">
+            <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].exercise.id}">
+            <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].exercise.name}">
+            <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].exercise.muscleGroup}">
+            <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].sets}">
+            <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].index}">
+        </th:block>
+    </th:block>
+    <th:block th:object="${exerciseForm.exercise}">
+        <input type="hidden" th:field="*{id}">
+        <div>
+            <label for="name">Name</label>
+            <input id="name" type="text" th:field="*{name}" />
+        </div>
+        <div>
+            <label for="muscle-group">Muscle Group</label>
+            <select id="muscle-group" th:field="*{muscleGroup}">
+                <option th:each="muscleGroup : ${muscleGroups}"
+                        th:value="${muscleGroup.getKey()}" th:text="${muscleGroup.getValue()}">
+                </option>
+            </select>
+        </div>
+    </th:block>
+    <input type="submit" value="Save" />
+</form>
+</body>
+</html>

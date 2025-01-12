@@ -3,6 +3,7 @@ package org.example.workouttracker.model;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Entity
@@ -63,5 +64,9 @@ public class Workout {
         exerciseWorkout.setExercise(new Exercise());
         exerciseWorkout.setIndex(this.exerciseWorkouts.size());
         exerciseWorkouts.add(exerciseWorkout);
+    }
+
+    public void sortExerciseWorkouts() {
+        exerciseWorkouts.sort(Comparator.comparingInt(ExerciseWorkout::getIndex));
     }
 }

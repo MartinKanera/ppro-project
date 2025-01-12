@@ -17,15 +17,19 @@
         <label for="name">Name</label>
         <input id="name" type="text" th:field="*{name}" />
     </div>
-    <th:div class="exercise" th:each="exerciseWorkout, iStat : ${workout.exerciseWorkouts}">
+    <div class="exercise" th:each="exerciseWorkout, iStat : ${workout.exerciseWorkouts}">
         <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].id}" />
         <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].index}" th:value="${iStat.index}" />
-        <select th:field="*{exerciseWorkouts[__${iStat.index}__].exercise}">
-            <option th:each="exercise : ${existingExercises}" th:value="${exercise.id}" th:text="${exercise.name}"></option>
+        <select th:id="${'exerciseWorkouts[' + iStat.index + '].exercise.id'}" th:name="${'exerciseWorkouts[' + iStat.index + '].exercise.id'}">
+            <option th:each="exercise : ${existingExercises}"
+                    th:value="${exercise.id}"
+                    th:text="${exercise.name}"
+                    th:selected="${exercise.id == exerciseWorkout.exercise.id}">
+            </option>
         </select>
         <input type="number" th:field="*{exerciseWorkouts[__${iStat.index}__].sets}" />
-    </th:div>
-    <button type="button">Create Exercise</button>
+    </div>
+    <button type="button" th:onclick="|createExercise('${edit}');|">Create Exercise</button>
     <button type="button" th:onclick="|addExercise('${edit}');|">Add Exercise</button>
     <input type="submit" value="Save" />
 </form>
@@ -33,12 +37,15 @@
 </html>
 
 <script>
+    const form = document.querySelector('form');
+
     function addExercise(isEdit) {
-        console.log(isEdit)
-        const form = document.querySelector('form');
         form.action = '/workout/addExercise?edit=' + isEdit;
         form.submit();
     }
 
-
+    function createExercise(edit) {
+        form.action = '/exercise/create?editWorkout=' + edit;
+        form.submit();
+    }
 </script>
