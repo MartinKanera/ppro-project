@@ -51,7 +51,7 @@ public class WorkoutController {
         redirectAttributes.addFlashAttribute("edit", edit);
 
         if (edit) {
-            return "redirect:/workout/edit";
+            return "redirect:/workout/edit/" + workout.getId();
         } else {
             return "redirect:/workout/create";
         }
@@ -65,6 +65,18 @@ public class WorkoutController {
             model.addAttribute("workout", workout);
             model.addAttribute("existingExercises", exerciseService.getAllExercises());
             model.addAttribute("edit", false);
+        }
+        return "workout/edit";
+    }
+
+    @GetMapping("/workout/edit/{id}")
+    public String edit(Model model, @PathVariable long id) {
+
+        if (!model.containsAttribute("workout")) {
+            Workout workout = workoutService.getWorkoutById(id);
+            model.addAttribute("workout", workout);
+            model.addAttribute("existingExercises", exerciseService.getAllExercises());
+            model.addAttribute("edit", true);
         }
         return "workout/edit";
     }

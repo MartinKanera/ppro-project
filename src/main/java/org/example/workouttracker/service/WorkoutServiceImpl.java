@@ -23,4 +23,10 @@ public class WorkoutServiceImpl implements WorkoutService {
     public List<Workout> getAllWorkoutsForUser(long userId) {
         return workoutRepository.getAllByUserId(userId);
     }
+
+    @Override
+    public Workout getWorkoutById(long workoutId) {
+        return workoutRepository.findById(workoutId).
+                orElseThrow(() -> new IllegalArgumentException("Invalid workout ID"));
+    }
 }

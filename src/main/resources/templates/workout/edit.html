@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${edit ? 'Edit Workout' : 'Create Workout'}"></title>
+    <style>
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
 </head>
 <body>
 <form th:action="@{'/workout/save'}" method="post" th:object="${workout}">
@@ -11,14 +17,15 @@
         <label for="name">Name</label>
         <input id="name" type="text" th:field="*{name}" />
     </div>
-    <th:block th:each="exerciseWorkout, iStat : ${workout.exerciseWorkouts}">
+    <th:div class="exercise" th:each="exerciseWorkout, iStat : ${workout.exerciseWorkouts}">
         <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].id}" />
         <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].index}" th:value="${iStat.index}" />
         <select th:field="*{exerciseWorkouts[__${iStat.index}__].exercise}">
             <option th:each="exercise : ${existingExercises}" th:value="${exercise.id}" th:text="${exercise.name}"></option>
         </select>
         <input type="number" th:field="*{exerciseWorkouts[__${iStat.index}__].sets}" />
-    </th:block>
+    </th:div>
+    <button type="button">Create Exercise</button>
     <button type="button" th:onclick="|addExercise('${edit}');|">Add Exercise</button>
     <input type="submit" value="Save" />
 </form>
@@ -32,4 +39,6 @@
         form.action = '/workout/addExercise?edit=' + isEdit;
         form.submit();
     }
+
+
 </script>
