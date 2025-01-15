@@ -8,4 +8,6 @@ public interface WorkoutService {
     void save(Workout workout);
     List<Workout> getAllWorkoutsForUser(long userId);
     Workout getWorkoutById(long workoutId);
+    void deleteWorkout(long id);
+    boolean isWorkoutOwner(long workoutId, long userId);
 }

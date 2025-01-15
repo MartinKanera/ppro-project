@@ -1,8 +1,6 @@
 package org.example.workouttracker.controller;
 
 import jakarta.validation.Valid;
-import org.example.workouttracker.model.Exercise;
-import org.example.workouttracker.model.ExerciseWorkout;
 import org.example.workouttracker.model.Workout;
 import org.example.workouttracker.security.CustomUserDetails;
 import org.example.workouttracker.service.ExerciseService;
@@ -13,8 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.example.workouttracker.service.WorkoutService;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.List;
 
 
 @Controller
@@ -39,7 +35,13 @@ public class WorkoutController {
     @PostMapping("/workout/save")
     public String save(@Valid Workout workout, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
-        workout.setUser(customUserDetails.getUser());
+        boolean isNew = workout.getId() == null;
+        boolean isOwner = !isNew && workoutService.isWorkoutOwner(workout.getId(), customUserDetails.getUserId());
+
+        if (!isNew && !isOwner) {
+            return "redirect:/workouts";
+        }
+
         workout.getExerciseWorkouts()
                 .forEach(exerciseWorkout -> exerciseWorkout.setWorkout(workout));
 
@@ -76,9 +78,10 @@ public class WorkoutController {
     }
 
     @GetMapping("/workout/create")
-    public String create(Model model) {
+    public String create(Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         if (!model.containsAttribute("workout")) {
             Workout workout = new Workout();
+            workout.setUser(customUserDetails.getUser());
             workout.addEmptyExerciseWorkout();
             model.addAttribute("workout", workout);
         }
@@ -88,7 +91,11 @@ public class WorkoutController {
     }
 
     @GetMapping("/workout/edit/{id}")
-    public String edit(Model model, @PathVariable long id) {
+    public String edit(Model model, @PathVariable long id, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        if (!workoutService.isWorkoutOwner(id, customUserDetails.getUserId())) {
+            return "redirect:/workouts";
+        }
 
         if (!model.containsAttribute("workout")) {
             Workout workout = workoutService.getWorkoutById(id);
@@ -97,5 +104,15 @@ public class WorkoutController {
         model.addAttribute("edit", true);
         model.addAttribute("existingExercises", exerciseService.getAllExercises());
         return "workout/edit";
+    }
+
+    @GetMapping("/workout/delete/{id}")
+    public String delete(@PathVariable long id, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        if (workoutService.isWorkoutOwner(id, customUserDetails.getUserId())) {
+            workoutService.deleteWorkout(id);
+        }
+
+        return "redirect:/workouts";
     }
 }

@@ -13,6 +13,7 @@
 <body>
 <form th:action="@{'/workout/save'}" method="post" th:object="${workout}">
     <input type="hidden" th:field="*{id}">
+    <input type="hidden" th:field="*{user}">
     <div>
         <label for="name">Name</label>
         <input id="name" type="text" th:field="*{name}" />

@@ -32,4 +32,14 @@ public class WorkoutServiceImpl implements WorkoutService {
 
         return workout;
     }
+
+    @Override
+    public void deleteWorkout(long id) {
+        workoutRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean isWorkoutOwner(long workoutId, long userId) {
+        return workoutRepository.existsByIdAndUserId(workoutId, userId);
+    }
 }
