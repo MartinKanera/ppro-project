@@ -51,7 +51,15 @@ public class WorkoutController {
     }
 
     @PostMapping("/workout/addExercise")
-    public String addExercise(@ModelAttribute Workout workout, @RequestParam("edit") boolean edit, RedirectAttributes redirectAttributes) {
+    public String addExercise(@ModelAttribute Workout workout, @RequestParam("edit") boolean edit, RedirectAttributes redirectAttributes, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        boolean isNew = workout.getId() == null;
+        boolean isOwner = !isNew && workoutService.isWorkoutOwner(workout.getId(), customUserDetails.getUserId());
+
+        if (!isNew && !isOwner) {
+            return "redirect:/workouts";
+        }
+
         workout.addEmptyExerciseWorkout();
 
         redirectAttributes.addFlashAttribute("workout", workout);
@@ -64,7 +72,14 @@ public class WorkoutController {
     }
 
     @PostMapping("/workout/removeExercise/{index}")
-    public String removeExercise(@ModelAttribute Workout workout, @PathVariable int index, @RequestParam("edit") boolean edit, RedirectAttributes redirectAttributes) {
+    public String removeExercise(@ModelAttribute Workout workout, @PathVariable int index, @RequestParam("edit") boolean edit, RedirectAttributes redirectAttributes, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        boolean isNew = workout.getId() == null;
+        boolean isOwner = !isNew && workoutService.isWorkoutOwner(workout.getId(), customUserDetails.getUserId());
+
+        if (!isNew && !isOwner) {
+            return "redirect:/workouts";
+        }
 
         workout.removeExerciseWorkout(index);
 
