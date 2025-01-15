@@ -2,6 +2,7 @@ package org.example.workouttracker.controller;
 
 import jakarta.validation.Valid;
 import org.example.workouttracker.model.Exercise;
+import org.example.workouttracker.model.ExerciseWorkout;
 import org.example.workouttracker.model.Workout;
 import org.example.workouttracker.security.CustomUserDetails;
 import org.example.workouttracker.service.ExerciseService;
@@ -12,6 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.example.workouttracker.service.WorkoutService;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 
 @Controller
@@ -37,7 +40,11 @@ public class WorkoutController {
     public String save(@Valid Workout workout, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
         workout.setUser(customUserDetails.getUser());
-        workout.getExerciseWorkouts().forEach(exerciseWorkout -> exerciseWorkout.setWorkout(workout));
+        workout.getExerciseWorkouts()
+                .forEach(exerciseWorkout -> exerciseWorkout.setWorkout(workout));
+
+        workout.getExerciseWorkouts().forEach(exerciseWorkout -> System.out.println(exerciseWorkout.getExercise().getName()));
+
         workoutService.save(workout);
 
         return "redirect:/workouts";
@@ -48,8 +55,20 @@ public class WorkoutController {
         workout.addEmptyExerciseWorkout();
 
         redirectAttributes.addFlashAttribute("workout", workout);
-        redirectAttributes.addFlashAttribute("existingExercises", exerciseService.getAllExercises());
-        redirectAttributes.addFlashAttribute("edit", edit);
+
+        if (edit) {
+            return "redirect:/workout/edit/" + workout.getId();
+        } else {
+            return "redirect:/workout/create";
+        }
+    }
+
+    @PostMapping("/workout/removeExercise/{index}")
+    public String removeExercise(@ModelAttribute Workout workout, @PathVariable int index, @RequestParam("edit") boolean edit, RedirectAttributes redirectAttributes) {
+
+        workout.removeExerciseWorkout(index);
+
+        redirectAttributes.addFlashAttribute("workout", workout);
 
         if (edit) {
             return "redirect:/workout/edit/" + workout.getId();

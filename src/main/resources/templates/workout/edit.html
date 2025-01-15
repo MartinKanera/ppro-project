@@ -28,6 +28,7 @@
             </option>
         </select>
         <input type="number" th:field="*{exerciseWorkouts[__${iStat.index}__].sets}" />
+        <button type="button" th:onclick="|removeExercise(${iStat.index}, '${edit}');|">Remove</button>
     </div>
     <button type="button" th:onclick="|createExercise('${edit}');|">Create Exercise</button>
     <button type="button" th:onclick="|addExercise('${edit}');|">Add Exercise</button>
@@ -46,6 +47,11 @@
 
     function createExercise(edit) {
         form.action = '/exercise/create?editWorkout=' + edit;
+        form.submit();
+    }
+
+    function removeExercise(index, edit) {
+        form.action = `/workout/removeExercise/${index}?edit=${edit}`;
         form.submit();
     }
 </script>

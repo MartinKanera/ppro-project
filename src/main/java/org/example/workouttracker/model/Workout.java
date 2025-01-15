@@ -20,7 +20,7 @@ public class Workout {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExerciseWorkout> exerciseWorkouts = new ArrayList<>();
 
     public Workout() {
@@ -68,5 +68,14 @@ public class Workout {
 
     public void sortExerciseWorkouts() {
         exerciseWorkouts.sort(Comparator.comparingInt(ExerciseWorkout::getIndex));
+    }
+
+    public void removeExerciseWorkout(int index) {
+
+        this.exerciseWorkouts.remove(index);
+
+        for (int i = 0; i < exerciseWorkouts.size(); i++) {
+            exerciseWorkouts.get(i).setIndex(i);
+        }
     }
 }
