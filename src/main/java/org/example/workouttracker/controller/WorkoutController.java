@@ -43,8 +43,6 @@ public class WorkoutController {
         workout.getExerciseWorkouts()
                 .forEach(exerciseWorkout -> exerciseWorkout.setWorkout(workout));
 
-        workout.getExerciseWorkouts().forEach(exerciseWorkout -> System.out.println(exerciseWorkout.getExercise().getName()));
-
         workoutService.save(workout);
 
         return "redirect:/workouts";
