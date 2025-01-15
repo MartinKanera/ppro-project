@@ -76,7 +76,9 @@ public class ExerciseController {
 
         if (exerciseForm.workout != null) {
             List<ExerciseWorkout> exerciseWorkouts = exerciseForm.workout.getExerciseWorkouts();
-            exerciseWorkouts.add(new ExerciseWorkout(exerciseForm.workout, exerciseForm.exercise));
+            ExerciseWorkout exerciseWorkout = new ExerciseWorkout(exerciseForm.workout, exerciseForm.exercise);
+            exerciseWorkout.setIndex(exerciseWorkouts.size());
+            exerciseWorkouts.add(exerciseWorkout);
             exerciseForm.workout.setExerciseWorkouts(exerciseWorkouts);
         }
 
