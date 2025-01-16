@@ -21,10 +21,10 @@
         <h2>Log Workout</h2>
         <form id="workout-log" method="get">
             <select id="workout-id">
-                <option value="">Select Workout</option>
+                <option selected disabled value="">Select Workout</option>
                 <option th:each="workout : ${workouts}" th:value="${workout.id}" th:text="${workout.name}"></option>
             </select>
-            <input type="submit" value="log >">
+            <input disabled type="submit" value="log >">
         </form>
         <ul>
             <li th:each="log : ${workoutLogs}">
@@ -53,5 +53,13 @@
 
         form.action = `/workoutLog/create/${workoutId}`;
         form.submit();
+    });
+
+    const workoutSelect = document.querySelector('select#workout-id');
+
+    workoutSelect.addEventListener('change', (evt) => {
+        const workoutId = workoutSelect.value;
+
+        submitButton.disabled = !workoutId;
     });
 </script>

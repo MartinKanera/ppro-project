@@ -8,24 +8,49 @@
 
 <h2 th:text="${workoutLog.workoutName}"></h2>
 
-<form method="post" th:action="@{/workoutLog/save}" th:object="${workoutLog}">
+<form method="post" th:action="'/workoutLog/save/' + ${workoutId}" th:object="${workoutLog}">
 
-    <input type="hidden" th:field="*{logDate}">
+    <input type="hidden" name="logData" th:value="*{getISODate}">
     <input type="hidden" th:field="*{workoutName}">
 
     <div class="exercise" th:each="exerciseLog, exerciseStat : *{exerciseLogs}">
         <h3 th:text="${exerciseLog.exerciseName}"></h3>
+
         <input type="hidden" th:field="*{exerciseLogs[__${exerciseStat.index}__].exerciseName}">
         <input type="hidden" th:field="*{exerciseLogs[__${exerciseStat.index}__].muscleGroup}">
         <input type="hidden" th:field="*{exerciseLogs[__${exerciseStat.index}__].exerciseOrder}">
 
-        <div th:each="setLog, setStat : *{exerciseLogs[__${exerciseStat.index}__].setLogs}">
-            <span th:text="${setStat.index + 1}"></span>
-            <input type="hidden" th:field="*{exerciseLogs[__${exerciseStat.index}__].setLogs[__${setStat.index}__].setOrder}">
-            <input type="number" th:field="*{exerciseLogs[__${exerciseStat.index}__].setLogs[__${setStat.index}__].repetitions}" placeholder="Repetitions">
-            <input type="number" th:field="*{exerciseLogs[__${exerciseStat.index}__].setLogs[__${setStat.index}__].weight}" placeholder="Weight">
-        </div>
-
+        <table>
+            <thead>
+            <tr>
+                <th>Set</th>
+                <th>Repetitions</th>
+                <th>Weight</th>
+            </tr>
+            </thead>
+            <tbody>
+                <th:block th:each="setLog, setStat : *{exerciseLogs[__${exerciseStat.index}__].setLogs}">
+                    <tr>
+                        <input type="hidden" th:field="*{exerciseLogs[__${exerciseStat.index}__].setLogs[__${setStat.index}__].setOrder}">
+                        <td th:text="${setStat.index + 1}"></td>
+                        <td>
+                            <input type="number" min="1" th:field="*{exerciseLogs[__${exerciseStat.index}__].setLogs[__${setStat.index}__].repetitions}" placeholder="Repetitions">
+                        </td>
+                        <td>
+                            <input type="number" min="1" th:field="*{exerciseLogs[__${exerciseStat.index}__].setLogs[__${setStat.index}__].weight}" placeholder="Weight">
+                        </td>
+                    </tr>
+                    <tr th:if="${#fields.hasErrors('exerciseLogs[' + exerciseStat.index + '].setLogs[' + setStat.index + '].repetitions')}" >
+                        <td></td>
+                        <td colspan="2" th:errors="*{exerciseLogs[__${exerciseStat.index}__].setLogs[__${setStat.index}__].repetitions}"></td>
+                    </tr>
+                    <tr th:if="${#fields.hasErrors('exerciseLogs[' + exerciseStat.index + '].setLogs[' + setStat.index + '].weight')}">
+                        <td></td>
+                        <td colspan="2" th:errors="*{exerciseLogs[__${exerciseStat.index}__].setLogs[__${setStat.index}__].weight}"></td>
+                    </tr>
+                </th:block>
+            </tbody>
+        </table>
     </div>
     <input type="submit" value="Save">
 </form>

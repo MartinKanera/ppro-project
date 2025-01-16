@@ -1,5 +1,6 @@
 package org.example.workouttracker.controller;
 
+import jakarta.validation.Valid;
 import org.example.workouttracker.model.Exercise;
 import org.example.workouttracker.model.ExerciseWorkout;
 import org.example.workouttracker.model.Workout;
@@ -8,6 +9,7 @@ import org.example.workouttracker.service.ExerciseService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -19,6 +21,7 @@ import java.util.Optional;
 public class ExerciseController {
 
     public class ExerciseForm {
+        @Valid
         private final Exercise exercise;
         private final Workout workout;
         private final boolean isRedirectToWorkout;
@@ -68,14 +71,16 @@ public class ExerciseController {
     @GetMapping("/exercise/create")
     public String create(@ModelAttribute Workout workout, @RequestParam("redirectToWorkout") Optional<Boolean> redirectToWorkout, Model model) {
 
-        Map<Exercise.MuscleGroup, String> muscleGroups = Exercise.MuscleGroup.getMuscleGroupMap();
+        if (!model.containsAttribute("exerciseForm")) {
+            model.addAttribute("exerciseForm", new ExerciseForm(
+                    new Exercise(),
+                    workout,
+                    redirectToWorkout.orElse(false)
+            ));
+        }
 
+        Map<Exercise.MuscleGroup, String> muscleGroups = Exercise.MuscleGroup.getMuscleGroupMap();
         model.addAttribute("muscleGroups", muscleGroups);
-        model.addAttribute("exerciseForm", new ExerciseForm(
-                new Exercise(),
-                workout,
-                redirectToWorkout.orElse(false)
-        ));
         model.addAttribute("edit", false);
 
         return "exercise/edit";
@@ -90,12 +95,16 @@ public class ExerciseController {
 
         Map<Exercise.MuscleGroup, String> muscleGroups = Exercise.MuscleGroup.getMuscleGroupMap();
 
+        if (!model.containsAttribute("exerciseForm")) {
+            Exercise exercise = exerciseService.getExerciseById(id);
+            model.addAttribute("exerciseForm", new ExerciseForm(
+                    exercise,
+                    new Workout(),
+                    false
+            ));
+        }
+
         model.addAttribute("muscleGroups", muscleGroups);
-        model.addAttribute("exerciseForm", new ExerciseForm(
-                exerciseService.getExerciseById(id),
-                new Workout(),
-                false
-        ));
         model.addAttribute("edit", true);
 
         return "exercise/edit";
@@ -112,7 +121,24 @@ public class ExerciseController {
     }
 
     @PostMapping("/exercise/save")
-    public String save(@ModelAttribute ExerciseForm exerciseForm, RedirectAttributes redirectAttributes, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public String save(
+            @Valid @ModelAttribute ExerciseForm exerciseForm,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("exerciseForm", exerciseForm);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.exerciseForm", bindingResult);
+
+            boolean isEdit = exerciseForm.exercise.getId() != null;
+
+            if (isEdit) {
+                return "redirect:/exercise/edit/" + exerciseForm.exercise.getId();
+            } else {
+                return "redirect:/exercise/create";
+            }
+        }
 
         boolean isNew = exerciseForm.exercise.getId() == null;
         boolean isOwner = !isNew && exerciseService.isExerciseOwner(exerciseForm.exercise.getId(), customUserDetails.getUserId());
@@ -122,6 +148,17 @@ public class ExerciseController {
         }
 
         if (exerciseForm.workout != null) {
+
+            int lastExerciseIndex = exerciseForm.workout.getExerciseWorkouts().size() - 1;
+
+            boolean lastExerciseIsEmpty = !exerciseForm.workout.getExerciseWorkouts().isEmpty()
+                    && exerciseForm.workout.getExerciseWorkouts().get(lastExerciseIndex).getExercise().getId() == null;
+
+            if (lastExerciseIsEmpty) {
+                // Remove last exercise if it was empty, which will be replaced by the new exercise
+                exerciseForm.workout.getExerciseWorkouts().remove(lastExerciseIndex);
+            }
+
             List<ExerciseWorkout> exerciseWorkouts = exerciseForm.workout.getExerciseWorkouts();
             ExerciseWorkout exerciseWorkout = new ExerciseWorkout(exerciseForm.workout, exerciseForm.exercise);
             exerciseWorkout.setIndex(exerciseWorkouts.size());

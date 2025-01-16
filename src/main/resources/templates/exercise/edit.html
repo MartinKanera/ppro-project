@@ -19,21 +19,23 @@
             <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].index}">
         </th:block>
     </th:block>
-    <th:block th:object="${exerciseForm.exercise}">
-        <input type="hidden" th:field="*{id}">
-        <div>
-            <label for="name">Name</label>
-            <input id="name" type="text" th:field="*{name}" />
+    <input type="hidden" th:field="*{exercise.id}">
+    <div>
+        <label for="name">Name</label>
+        <input id="name" type="text" th:field="*{exercise.name}" />
+        <div th:if="${#fields.hasErrors('exercise.name')}" th:errors="*{exercise.name}">
+            Validation error message
         </div>
-        <div>
-            <label for="muscle-group">Muscle Group</label>
-            <select id="muscle-group" th:field="*{muscleGroup}">
-                <option th:each="muscleGroup : ${muscleGroups}"
-                        th:value="${muscleGroup.getKey()}" th:text="${muscleGroup.getValue()}">
-                </option>
-            </select>
-        </div>
-    </th:block>
+    </div>
+    <div>
+        <label for="muscle-group">Muscle Group</label>
+        <select id="muscle-group" th:field="*{exercise.muscleGroup}">
+            <option selected disabled value="">Select Muscle Group</option>
+            <option th:each="muscleGroup : ${muscleGroups}"
+                    th:value="${muscleGroup.getKey()}" th:text="${muscleGroup.getValue()}">
+            </option>
+        </select>
+    </div>
     <input type="submit" value="Save" />
 </form>
 </body>

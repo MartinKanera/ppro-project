@@ -1,5 +1,6 @@
 package org.example.workouttracker.controller;
 
+import jakarta.validation.Valid;
 import org.example.workouttracker.model.WorkoutLog;
 import org.example.workouttracker.security.CustomUserDetails;
 import org.example.workouttracker.service.WorkoutLogService;
@@ -7,37 +8,15 @@ import org.example.workouttracker.service.WorkoutService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class WorkoutLogController {
-
-    public class WorkoutLogInfo {
-        private final long id;
-        private final String formattedDate;
-        private final String workoutName;
-
-        public WorkoutLogInfo(long id, String formattedDate, String workoutName) {
-            this.id = id;
-            this.formattedDate = formattedDate;
-            this.workoutName = workoutName;
-        }
-
-        public long getId() {
-            return id;
-        }
-
-        public String getFormattedDate() {
-            return formattedDate;
-        }
-
-        public String getWorkoutName() {
-            return workoutName;
-        }
-    }
 
     private final WorkoutLogService workoutLogService;
     private final WorkoutService workoutService;
@@ -62,6 +41,10 @@ public class WorkoutLogController {
 
         if (!workoutService.isWorkoutOwner(workoutId, customUserDetails.getUser().getId())) return "redirect:/";
 
+        if (model.containsAttribute("workoutLog")) {
+            return "workout-log/create";
+        }
+
         WorkoutLog workoutLog = WorkoutLog.initFromWorkout(workoutService.getWorkoutById(workoutId));
 
         model.addAttribute("workoutLog", workoutLog);
@@ -81,8 +64,20 @@ public class WorkoutLogController {
         return "workout-log/view";
     }
 
-    @PostMapping("/workoutLog/save")
-    public String logWorkout(@ModelAttribute WorkoutLog workoutLog, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    @PostMapping("/workoutLog/save/{workoutId}")
+    public String logWorkout(
+            @Valid @ModelAttribute WorkoutLog workoutLog,
+            BindingResult bindingResult,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable long workoutId,
+            RedirectAttributes redirectAttributes
+        ) {
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.workoutLog", bindingResult);
+            redirectAttributes.addFlashAttribute("workoutLog", workoutLog);
+            return "redirect:/workoutLog/create/" + workoutId;
+        }
 
         workoutLog.setUser(customUserDetails.getUser());
 

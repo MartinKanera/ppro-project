@@ -1,6 +1,8 @@
 package org.example.workouttracker.controller;
 
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
+import org.example.workouttracker.model.Exercise;
 import org.example.workouttracker.model.Workout;
 import org.example.workouttracker.security.CustomUserDetails;
 import org.example.workouttracker.service.ExerciseService;
@@ -8,9 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.example.workouttracker.service.WorkoutService;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Optional;
 
 
 @Controller
@@ -33,7 +38,32 @@ public class WorkoutController {
     }
 
     @PostMapping("/workout/save")
-    public String save(@Valid Workout workout, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public String save(
+            @PathParam("edit") Optional<Boolean> edit,
+            @Valid Workout workout,
+            BindingResult bindingResult,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            RedirectAttributes redirectAttributes
+    ) {
+
+        if (bindingResult.hasErrors()) {
+
+            boolean isEdit = workout.getId() != null;
+            workout.getExerciseWorkouts().forEach(exerciseWorkout -> {
+                if (exerciseWorkout.getExercise() == null) {
+                    exerciseWorkout.setExercise(new Exercise());
+                }
+            });
+
+            redirectAttributes.addFlashAttribute("workout", workout);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.workout", bindingResult);
+
+            if (isEdit) {
+                return "redirect:/workout/edit/" + workout.getId();
+            }
+
+            return "redirect:/workout/create";
+        }
 
         boolean isNew = workout.getId() == null;
         boolean isOwner = !isNew && workoutService.isWorkoutOwner(workout.getId(), customUserDetails.getUserId());

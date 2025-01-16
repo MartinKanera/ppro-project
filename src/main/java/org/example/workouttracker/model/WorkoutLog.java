@@ -1,9 +1,12 @@
 package org.example.workouttracker.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 import java.text.DateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,10 +20,15 @@ public class WorkoutLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    @NotNull(message = "Date must be provided")
     private Date logDate = new Date(); // Date of the workout
 
+    @Column(nullable = false)
+    @NotNull(message = "Workout name must be provided")
     private String workoutName;
 
+    @Valid
     @OneToMany(mappedBy = "workoutLog", cascade = CascadeType.ALL)
     private List<ExerciseLog> exerciseLogs = new ArrayList<>();
 
@@ -71,6 +79,10 @@ public class WorkoutLog {
         Locale locale = new Locale("cs", "CZ");
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
         return dateFormat.format(this.logDate);
+    }
+
+    public LocalDate getISODate() {
+        return this.logDate.toInstant().atZone(ZoneId.of("Europe/Prague")).toLocalDate();
     }
 
     public void setUser(User user) {

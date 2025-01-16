@@ -1,6 +1,7 @@
 package org.example.workouttracker.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ public class ExerciseLog {
     @JoinColumn(name = "workout_log_id", nullable = false)
     private WorkoutLog workoutLog;
 
+    @Valid
     @OneToMany(mappedBy = "exerciseLog", cascade = CascadeType.ALL)
     private List<SetLog> setLogs = new ArrayList<>();
 

@@ -17,19 +17,25 @@
     <div>
         <label for="name">Name</label>
         <input id="name" type="text" th:field="*{name}" />
+        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span><br>
     </div>
     <div class="exercise" th:each="exerciseWorkout, iStat : ${workout.exerciseWorkouts}">
         <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].id}" />
         <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].index}" th:value="${iStat.index}" />
         <select th:id="${'exerciseWorkouts[' + iStat.index + '].exercise.id'}" th:name="${'exerciseWorkouts[' + iStat.index + '].exercise.id'}">
+            <option selected disabled value="">Select Exercise</option>
             <option th:each="exercise : ${existingExercises}"
                     th:value="${exercise.id}"
                     th:text="${exercise.name}"
                     th:selected="${exercise.id == exerciseWorkout.exercise.id}">
             </option>
         </select>
-        <input type="number" th:field="*{exerciseWorkouts[__${iStat.index}__].sets}" />
+        <input type="number" th:field="*{exerciseWorkouts[__${iStat.index}__].sets}" min="1" />
         <button type="button" th:onclick="|removeExercise(${iStat.index}, '${edit}');|">Remove</button>
+        <div>
+            <span th:if="${#fields.hasErrors('exerciseWorkouts[' + iStat.index + '].exercise')}" th:errors="*{exerciseWorkouts[__${iStat.index}__].exercise}"></span>
+            <span th:if="${#fields.hasErrors('exerciseWorkouts[' + iStat.index + '].sets')}" th:errors="*{exerciseWorkouts[__${iStat.index}__].sets}"></span>
+        </div>
     </div>
     <button type="button" th:onclick="|createExercise('${edit}');|">Create Exercise</button>
     <button type="button" th:onclick="|addExercise('${edit}');|">Add Exercise</button>

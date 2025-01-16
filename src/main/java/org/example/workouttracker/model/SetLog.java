@@ -1,6 +1,8 @@
 package org.example.workouttracker.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "set_logs")
@@ -10,8 +12,17 @@ public class SetLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer repetitions = 0;
-    private Double weight = 0.0;
+    @Column(nullable = false)
+    @NotNull(message = "Repetitions must be provided")
+    @Min(value = 0, message = "Repetitions must be greater than or equal to 0")
+    private Integer repetitions;
+
+    @Column(nullable = false)
+    @NotNull(message = "Weight must be provided")
+    @Min(value = 0, message = "Weight must be greater than or equal to 0")
+    private Double weight;
+
+    @Column(nullable = false)
     private Integer setOrder;
 
     @ManyToOne

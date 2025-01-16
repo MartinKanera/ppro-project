@@ -1,6 +1,7 @@
 package org.example.workouttracker.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -40,8 +41,11 @@ public class Exercise {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    @Size(min = 1, max = 255, message = "Name must be between 1 and 255 characters")
     private String name;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private MuscleGroup muscleGroup;
 

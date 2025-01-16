@@ -1,6 +1,8 @@
 package org.example.workouttracker.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name = "exercise_workouts")
@@ -14,12 +16,19 @@ public class ExerciseWorkout {
     @JoinColumn(name = "workout_id", nullable = false)
     private Workout workout;
 
+    @NotNull(message = "Exercise must be selected")
     @ManyToOne
     @JoinColumn(name = "exercise_id", nullable = false)
     private Exercise exercise;
 
-    private Integer sets; // Predefined number of sets
+    @Column(nullable = false)
+    @NotNull(message = "Sets must be provided")
+    @Min(value = 1, message = "Sets must be greater than 0")
+    private Integer sets;
 
+    @Column(nullable = false)
+    @NotNull(message = "Index must be provided")
+    @Max(value = 99, message = "Index must be between 0 and 99")
     private Integer index = 0;
 
     // Constructors
