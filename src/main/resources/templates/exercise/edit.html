@@ -6,7 +6,7 @@
 </head>
 <body>
 <form th:action="@{'/exercise/save'}" method="post" th:object="${exerciseForm}">
-    <input type="hidden" th:field="*{editWorkout}">
+    <input type="hidden" th:field="*{isRedirectToWorkout}">
     <th:block th:object="${exerciseForm.workout}">
         <input type="hidden" th:field="*{id}">
         <input type="hidden" th:field="*{name}">

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Exercises</title>
+    <style>
+        .disabled {
+            pointer-events: none;
+            color: grey;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <span>Manage Workouts</span>
+    <a th:href="@{'/exercise/create'}">Create Exercise</a>
+</div>
+<ul>
+    <li th:each="exercise : ${exercises}">
+        <span th:text="${exercise.name}"></span>
+        <a th:href="@{'/exercise/edit/' + ${exercise.id}}">Edit</a>
+        <a th:href="@{'/exercise/delete/' + ${exercise.id}}" th:class="${usedExercises.contains(exercise) ? 'disabled' : ''}">Delete</a>
+    </li>
+</ul>
+</body>
+</html>

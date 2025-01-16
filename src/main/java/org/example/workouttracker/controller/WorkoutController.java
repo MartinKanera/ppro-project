@@ -44,6 +44,7 @@ public class WorkoutController {
 
         workout.getExerciseWorkouts()
                 .forEach(exerciseWorkout -> exerciseWorkout.setWorkout(workout));
+        workout.setUser(customUserDetails.getUser());
 
         workoutService.save(workout);
 
@@ -101,7 +102,7 @@ public class WorkoutController {
             model.addAttribute("workout", workout);
         }
         model.addAttribute("edit", false);
-        model.addAttribute("existingExercises", exerciseService.getAllExercises());
+        model.addAttribute("existingExercises", exerciseService.getSortedExercisesByUser(customUserDetails.getUser()));
         return "workout/edit";
     }
 
@@ -117,7 +118,7 @@ public class WorkoutController {
             model.addAttribute("workout", workout);
         }
         model.addAttribute("edit", true);
-        model.addAttribute("existingExercises", exerciseService.getAllExercises());
+        model.addAttribute("existingExercises", exerciseService.getSortedExercisesByUser(customUserDetails.getUser()));
         return "workout/edit";
     }
 

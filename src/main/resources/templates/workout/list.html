@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Workouts</title>
+    <title>Manage Workouts</title>
 </head>
 <body>
     <div>
-        <span>Workouts</span>
-        <a th:href="@{'/workout/create'}">Create workout</a>
+        <span>Manage Workouts</span>
+        <a th:href="@{'/workout/create'}">Create Exercise</a>
     </div>
     <ul>
         <li th:each="workout : ${workouts}">
