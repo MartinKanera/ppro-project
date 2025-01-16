@@ -2,11 +2,56 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Main page</title>
+    <title>Workout Logs</title>
 </head>
 <body>
-    <form th:action="@{/logout}" method="post">
-        <input type="submit" value="Logout" />
-    </form>
+
+<div>
+    <div>
+        <h1>Welcome, <th:block th:text="${username}"></th:block></h1>
+        <form th:action="@{/logout}" method="post">
+            <input type="submit" value="Logout" />
+        </form>
+    </div>
+    <div>
+        <a href="/workouts">Manage Workouts</a>
+        <a href="/exercises">Manage Exercises</a>
+    </div>
+    <div>
+        <h2>Log Workout</h2>
+        <form id="workout-log" method="get">
+            <select id="workout-id">
+                <option value="">Select Workout</option>
+                <option th:each="workout : ${workouts}" th:value="${workout.id}" th:text="${workout.name}"></option>
+            </select>
+            <input type="submit" value="log >">
+        </form>
+        <ul>
+            <li th:each="log : ${workoutLogs}">
+                <a th:href="@{/workoutLog/{id}(id=${log.id})}">
+                    <span th:text="${log.workoutName}"></span>
+                    <span th:text="${log.formattedDate}"></span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
 </body>
 </html>
+
+<script>
+    const form = document.querySelector('form#workout-log');
+    const submitButton = form.querySelector('input[type="submit"]');
+
+    submitButton.addEventListener('click', (evt) => {
+        evt.preventDefault();
+
+        const workoutId = document.querySelector('select#workout-id').value;
+
+        if (!workoutId) return;
+
+        form.action = `/workoutLog/create/${workoutId}`;
+        form.submit();
+    });
+</script>

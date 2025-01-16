@@ -10,9 +10,9 @@ public class SetLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer repetitions; // Number of repetitions
-    private Double weight; // Weight lifted for this set
-    private Integer setOrder; // Order of the set in the workout
+    private Integer repetitions = 0;
+    private Double weight = 0.0;
+    private Integer setOrder;
 
     @ManyToOne
     @JoinColumn(name = "exercise_log_id", nullable = false)

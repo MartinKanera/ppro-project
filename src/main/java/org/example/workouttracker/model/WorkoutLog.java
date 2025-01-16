@@ -2,8 +2,12 @@ package org.example.workouttracker.model;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.text.DateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @Entity
 @Table(name = "workout_logs")
@@ -13,12 +17,12 @@ public class WorkoutLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime logDate = LocalDateTime.now(); // Date of the workout
+    private Date logDate = new Date(); // Date of the workout
 
     private String workoutName;
 
     @OneToMany(mappedBy = "workoutLog", cascade = CascadeType.ALL)
-    private List<ExerciseLog> exerciseLogs;
+    private List<ExerciseLog> exerciseLogs = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -35,11 +39,11 @@ public class WorkoutLog {
         this.id = id;
     }
 
-    public LocalDateTime getLogDate() {
+    public Date getLogDate() {
         return logDate;
     }
 
-    public void setLogDate(LocalDateTime logDate) {
+    public void setLogDate(Date logDate) {
         this.logDate = logDate;
     }
 
@@ -63,32 +67,40 @@ public class WorkoutLog {
         return user;
     }
 
+    public String getFormattedDate() {
+        Locale locale = new Locale("cs", "CZ");
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
+        return dateFormat.format(this.logDate);
+    }
+
     public void setUser(User user) {
         this.user = user;
     }
 
-    //    public static WorkoutLog initFromWorkout(Workout workout) {
-//        WorkoutLog workoutLog = new WorkoutLog();
-//        workoutLog.setWorkoutName(workout.getName());
-//
-//        int setLogIndex = 0;
-//
-//        List<ExerciseWorkout> exerciseWorkouts = workout.getExerciseWorkouts();
-//        for (ExerciseWorkout exerciseWorkout : exerciseWorkouts) {
-//            int numberOfSets = exerciseWorkout.getSets();
-//
-//            for (int setN = 0; setN < numberOfSets; setN++) {
-//                SetLog setLog = new SetLog();
-//                setLog.setExerciseName(exerciseWorkout.getExercise().getName());
-//                setLog.setMuscleGroup(exerciseWorkout.getExercise().getMuscleGroup());
-////                setLog.setRepetitions(0);
-////                setLog.setWeight(0.0);
-//                setLog.setIndex(setLogIndex++);
-//                setLog.setWorkoutLog(workoutLog);
-//                workoutLog.getSetLogs().add(setLog);
-//            }
-//        }
-//
-//        return workoutLog;
-//    }
+        public static WorkoutLog initFromWorkout(Workout workout) {
+        WorkoutLog workoutLog = new WorkoutLog();
+        workoutLog.setWorkoutName(workout.getName());
+
+        List<ExerciseWorkout> exerciseWorkouts = workout.getExerciseWorkouts();
+        for (ExerciseWorkout exerciseWorkout : exerciseWorkouts) {
+            ExerciseLog exerciseLog = new ExerciseLog();
+            exerciseLog.setExerciseName(exerciseWorkout.getExercise().getName());
+            exerciseLog.setExerciseOrder(exerciseWorkout.getIndex());
+            exerciseLog.setMuscleGroup(exerciseWorkout.getExercise().getMuscleGroup());
+            exerciseLog.setWorkoutLog(workoutLog);
+
+            int numberOfSets = exerciseWorkout.getSets();
+
+            for (int i = 0; i < numberOfSets; i++) {
+                SetLog setLog = new SetLog();
+                setLog.setSetOrder(i);
+                setLog.setExerciseLog(exerciseLog);
+                exerciseLog.getSetLogs().add(setLog);
+            }
+
+            workoutLog.getExerciseLogs().add(exerciseLog);
+        }
+
+        return workoutLog;
+    }
 }

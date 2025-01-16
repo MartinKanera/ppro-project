@@ -2,6 +2,7 @@ package org.example.workouttracker.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,8 +24,7 @@ public class ExerciseLog {
     private WorkoutLog workoutLog;
 
     @OneToMany(mappedBy = "exerciseLog", cascade = CascadeType.ALL)
-    private List<SetLog> setLogs;
-
+    private List<SetLog> setLogs = new ArrayList<>();
 
     public ExerciseLog() {
     }

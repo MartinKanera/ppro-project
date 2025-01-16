@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Log</title>
+</head>
+<body>
+
+<h2 th:text="${workoutLog.workoutName}"></h2>
+
+<form method="post" th:action="@{/workoutLog/save}" th:object="${workoutLog}">
+
+    <input type="hidden" th:field="*{logDate}">
+    <input type="hidden" th:field="*{workoutName}">
+
+    <div class="exercise" th:each="exerciseLog, exerciseStat : *{exerciseLogs}">
+        <h3 th:text="${exerciseLog.exerciseName}"></h3>
+        <input type="hidden" th:field="*{exerciseLogs[__${exerciseStat.index}__].exerciseName}">
+        <input type="hidden" th:field="*{exerciseLogs[__${exerciseStat.index}__].muscleGroup}">
+        <input type="hidden" th:field="*{exerciseLogs[__${exerciseStat.index}__].exerciseOrder}">
+
+        <div th:each="setLog, setStat : *{exerciseLogs[__${exerciseStat.index}__].setLogs}">
+            <span th:text="${setStat.index + 1}"></span>
+            <input type="hidden" th:field="*{exerciseLogs[__${exerciseStat.index}__].setLogs[__${setStat.index}__].setOrder}">
+            <input type="number" th:field="*{exerciseLogs[__${exerciseStat.index}__].setLogs[__${setStat.index}__].repetitions}" placeholder="Repetitions">
+            <input type="number" th:field="*{exerciseLogs[__${exerciseStat.index}__].setLogs[__${setStat.index}__].weight}" placeholder="Weight">
+        </div>
+
+    </div>
+    <input type="submit" value="Save">
+</form>
+</body>
+</html>
