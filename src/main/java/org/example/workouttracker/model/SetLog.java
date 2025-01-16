@@ -10,31 +10,17 @@ public class SetLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "workout_log_id", nullable = false)
-    private WorkoutLog workoutLog;
-
-    @ManyToOne
-    @JoinColumn(name = "exercise_id", nullable = false)
-    private Exercise exercise;
-
-    private Integer setNumber; // Set order (e.g., 1, 2, 3)
     private Integer repetitions; // Number of repetitions
     private Double weight; // Weight lifted for this set
-    private Integer index; // Order of the set in the workout
+    private Integer setOrder; // Order of the set in the workout
 
-    // Constructors
+    @ManyToOne
+    @JoinColumn(name = "exercise_log_id", nullable = false)
+    private ExerciseLog exerciseLog;
+
     public SetLog() {
     }
 
-    public SetLog(int setNumber, int repetitions, double weight, Exercise exercise) {
-        this.setNumber = setNumber;
-        this.repetitions = repetitions;
-        this.weight = weight;
-        this.exercise = exercise;
-    }
-
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -43,43 +29,35 @@ public class SetLog {
         this.id = id;
     }
 
-    public int getSetNumber() {
-        return setNumber;
-    }
-
-    public void setSetNumber(int setNumber) {
-        this.setNumber = setNumber;
-    }
-
-    public int getRepetitions() {
+    public Integer getRepetitions() {
         return repetitions;
     }
 
-    public void setRepetitions(int repetitions) {
+    public void setRepetitions(Integer repetitions) {
         this.repetitions = repetitions;
     }
 
-    public double getWeight() {
+    public Double getWeight() {
         return weight;
     }
 
-    public void setWeight(double weight) {
+    public void setWeight(Double weight) {
         this.weight = weight;
     }
 
-    public Exercise getExercise() {
-        return exercise;
+    public Integer getSetOrder() {
+        return setOrder;
     }
 
-    public void setExercise(Exercise exercise) {
-        this.exercise = exercise;
+    public void setSetOrder(Integer setOrder) {
+        this.setOrder = setOrder;
     }
 
-    public int getIndex() {
-        return index;
+    public ExerciseLog getExerciseLog() {
+        return exerciseLog;
     }
 
-    public void setIndex(int order) {
-        this.index = order;
+    public void setExerciseLog(ExerciseLog exerciseLog) {
+        this.exerciseLog = exerciseLog;
     }
 }
