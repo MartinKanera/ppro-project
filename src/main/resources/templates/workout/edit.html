@@ -47,7 +47,6 @@
     <form th:action="@{'/workout/save'}" method="post" th:object="${workout}">
         <input type="hidden" th:field="*{id}">
         <input type="hidden" th:field="*{user}">
-        <label for="name">Workout name</label>
         <input id="name" type="text" th:field="*{name}" placeholder="Workout name" />
         <span class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
         <div class="exercise-error" th:each="exerciseWorkout, iStat : ${workout.exerciseWorkouts}">

@@ -90,7 +90,7 @@
             </select>
             <input id="log-workout" disabled type="submit" value="">
         </form>
-        <ul>
+        <ul th:if="${!workoutLogs.isEmpty()}">
             <li th:each="log : ${workoutLogs}">
                 <a class="log-record" th:href="@{/workoutLog/{id}(id=${log.id})}">
                     <span class="workout-name" th:text="${log.workoutName}"></span>
@@ -98,6 +98,7 @@
                 </a>
             </li>
         </ul>
+        <div class="empty-list" th:if="${workoutLogs.isEmpty()}"></div>
     </div>
 </div>
 

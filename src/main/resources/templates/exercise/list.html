@@ -26,7 +26,7 @@
             <a class="add" th:href="@{'/exercise/create'}"></a>
         </div>
     </div>
-    <ul>
+    <ul th:if="${!exercises.isEmpty()}">
         <li th:each="exercise : ${exercises}">
             <span class="exercise-name" th:text="${exercise.name}"></span>
             <div class="actions">
@@ -35,6 +35,7 @@
             </div>
         </li>
     </ul>
+    <div class="empty-list" th:if="${exercises.isEmpty()}"></div>
 </div>
 </body>
 </html>
