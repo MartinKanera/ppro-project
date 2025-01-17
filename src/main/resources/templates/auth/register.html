@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Register</title>
+    <link rel="stylesheet" href="/styles.css" type="text/css">
 </head>
 <body>
-  <h1>Please Register</h1>
-  <form th:action="@{/register}" method="post" th:object="${user}">
-    <div>
+  <div class="card">
+    <h2>Register new account</h2>
+    <form th:action="@{/register}" method="post" th:object="${user}">
       <input type="text" name="username" placeholder="Username" th:field="*{username}" />
-      <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span><br>
-    </div>
-    <div>
+      <span class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
       <input type="password" name="password" placeholder="Password" th:field="*{password}" />
-      <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span><br>
-    </div>
-    <a th:href="@{'/login'}">Log in instead</a>
-    <input type="submit" value="Register" />
-  </form>
+      <span class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+        <input type="submit" value="Register" />
+      <a th:href="@{'/login'}">Log in instead</a>
+    </form>
+  </div>
 </body>
 </html>

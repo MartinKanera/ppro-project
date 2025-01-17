@@ -3,33 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <title>Workout Logs</title>
+    <link rel="stylesheet" href="/styles.css" type="text/css">
+    <style>
+
+        h2 {
+            display: inline-block;
+        }
+
+        #sign-out-form {
+            display: inline-block;
+        }
+
+        #sign-out {
+            background-color: transparent;
+            background-image: url(/icons/icon-logout.svg);
+            background-size: 100%;
+            width: 32px;
+            height: 32px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .actions a {
+            flex-grow: 1;
+        }
+
+        .workout-log {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .workout-log .header {
+            margin-bottom: 20px;
+        }
+
+        form#workout-log {
+            display: flex;
+            flex-direction: row;
+        }
+
+        form#workout-log input[type="submit"] {
+            background-image: url(/icons/icon-log.svg);
+            background-size: 100%;
+            background-position: 2px center;
+            width: 36px;
+            border: none;
+            cursor: pointer;
+        }
+
+        a.log-record {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+        }
+
+        .workout-name {
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 
-<div>
-    <div>
-        <h1>Welcome, <th:block th:text="${username}"></th:block></h1>
-        <form th:action="@{/logout}" method="post">
-            <input type="submit" value="Logout" />
+<div class="card">
+    <div class="header">
+        <h2>Welcome, <th:block th:text="${username}"></th:block></h2>
+        <form id="sign-out-form" th:action="@{/logout}" method="post">
+            <input id="sign-out" type="submit" value="">
         </form>
     </div>
-    <div>
+    <div class="actions">
         <a href="/workouts">Manage Workouts</a>
         <a href="/exercises">Manage Exercises</a>
     </div>
-    <div>
-        <h2>Log Workout</h2>
+    <div class="workout-log">
+        <div class="header"><h2>Log workout</h2></div>
         <form id="workout-log" method="get">
             <select id="workout-id">
                 <option selected disabled value="">Select Workout</option>
                 <option th:each="workout : ${workouts}" th:value="${workout.id}" th:text="${workout.name}"></option>
             </select>
-            <input disabled type="submit" value="log >">
+            <input id="log-workout" disabled type="submit" value="">
         </form>
         <ul>
             <li th:each="log : ${workoutLogs}">
-                <a th:href="@{/workoutLog/{id}(id=${log.id})}">
-                    <span th:text="${log.workoutName}"></span>
+                <a class="log-record" th:href="@{/workoutLog/{id}(id=${log.id})}">
+                    <span class="workout-name" th:text="${log.workoutName}"></span>
                     <span th:text="${log.formattedDate}"></span>
                 </a>
             </li>
@@ -57,7 +121,7 @@
 
     const workoutSelect = document.querySelector('select#workout-id');
 
-    workoutSelect.addEventListener('change', (evt) => {
+    workoutSelect.addEventListener('change', () => {
         const workoutId = workoutSelect.value;
 
         submitButton.disabled = !workoutId;

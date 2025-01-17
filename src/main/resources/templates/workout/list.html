@@ -3,18 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>Manage Workouts</title>
+    <link rel="stylesheet" href="/styles.css" type="text/css">
+    <style>
+        li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-primary);
+        }
+
+        .workout-name {
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <div>
-        <span>Manage Workouts</span>
-        <a th:href="@{'/workout/create'}">Create Workout</a>
+    <div class="card">
+        <div class="header">
+            <h2>Manage Workouts</h2>
+            <div class="actions">
+                <a class="back" th:href="@{'/'}"></a>
+                <a class="add" th:href="@{'/workout/create'}"></a>
+            </div>
+        </div>
+        <ul>
+            <li th:each="workout : ${workouts}">
+                <span class="workout-name" th:text="${workout.name}"></span>
+                <div class="actions">
+                    <a class="edit" th:href="@{'/workout/edit/' + ${workout.id}}"></a>
+                    <a class="delete" th:href="@{'/workout/delete/' + ${workout.id}}"></a>
+                </div>
+            </li>
+        </ul>
     </div>
-    <ul>
-        <li th:each="workout : ${workouts}">
-            <span th:text="${workout.name}"></span>
-            <a th:href="@{'/workout/edit/' + ${workout.id}}">Edit</a>
-            <a th:href="@{'/workout/delete/' + ${workout.id}}">Delete</a>
-        </li>
-    </ul>
 </body>
 </html>

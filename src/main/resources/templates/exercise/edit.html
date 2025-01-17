@@ -2,41 +2,56 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title th:text="${edit ? 'Edit Exercise' : 'Create Exercise'}"></title>
+    <link rel="stylesheet" href="/styles.css" type="text/css">
+    <style>
+        .muscle-group-select {
+            display: flex;
+            gap: 8px;
+        }
+
+        .muscle-group-select label {
+            display: flex;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
-<form th:action="@{'/exercise/save'}" method="post" th:object="${exerciseForm}">
-    <input type="hidden" th:field="*{isRedirectToWorkout}">
-    <th:block th:object="${exerciseForm.workout}">
-        <input type="hidden" th:field="*{id}">
-        <input type="hidden" th:field="*{name}">
-        <th:block th:each="exerciseWorkout, iStat : ${exerciseForm.workout.exerciseWorkouts}">
-            <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].id}">
-            <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].exercise.id}">
-            <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].exercise.name}">
-            <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].exercise.muscleGroup}">
-            <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].sets}">
-            <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].index}">
-        </th:block>
-    </th:block>
-    <input type="hidden" th:field="*{exercise.id}">
-    <div>
-        <label for="name">Name</label>
-        <input id="name" type="text" th:field="*{exercise.name}" />
-        <div th:if="${#fields.hasErrors('exercise.name')}" th:errors="*{exercise.name}">
-            Validation error message
+<div class="card">
+    <div class="header">
+        <h2 th:text="${edit ? 'Edit Exercise' : 'Create Exercise'}"></h2>
+        <div class="actions">
+            <a href="/exercises" class="back"></a>
         </div>
     </div>
-    <div>
-        <label for="muscle-group">Muscle Group</label>
-        <select id="muscle-group" th:field="*{exercise.muscleGroup}">
-            <option selected disabled value="">Select Muscle Group</option>
-            <option th:each="muscleGroup : ${muscleGroups}"
-                    th:value="${muscleGroup.getKey()}" th:text="${muscleGroup.getValue()}">
-            </option>
-        </select>
-    </div>
-    <input type="submit" value="Save" />
-</form>
+    <form th:action="@{'/exercise/save'}" method="post" th:object="${exerciseForm}">
+        <input type="hidden" th:field="*{isRedirectToWorkout}">
+        <th:block th:object="${exerciseForm.workout}">
+            <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{name}">
+            <th:block th:each="exerciseWorkout, iStat : ${exerciseForm.workout.exerciseWorkouts}">
+                <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].id}">
+                <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].exercise.id}">
+                <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].exercise.name}">
+                <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].exercise.muscleGroup}">
+                <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].sets}">
+                <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].index}">
+            </th:block>
+        </th:block>
+        <input type="hidden" th:field="*{exercise.id}">
+        <input id="name" type="text" th:field="*{exercise.name}" placeholder="Exercise name" />
+        <span class="error" th:if="${#fields.hasErrors('exercise.name')}" th:errors="*{exercise.name}"></span>
+        <div class="muscle-group-select">
+            <label for="muscle-group">Muscle Group</label>
+            <select id="muscle-group" th:field="*{exercise.muscleGroup}">
+                <option selected disabled value="">Select Muscle Group</option>
+                <option th:each="muscleGroup : ${muscleGroups}"
+                        th:value="${muscleGroup.getKey()}" th:text="${muscleGroup.getValue()}">
+                </option>
+            </select>
+        </div>
+        <input type="submit" value="Save" />
+    </form>
+</div>
 </body>
 </html>

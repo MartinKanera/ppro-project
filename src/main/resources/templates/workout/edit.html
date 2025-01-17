@@ -3,44 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${edit ? 'Edit Workout' : 'Create Workout'}"></title>
+    <link rel="stylesheet" href="/styles.css" type="text/css">
     <style>
-        form {
+        .exercise {
+            display: flex;
+            gap: 8px;
+        }
+
+        .workout-actions {
             display: flex;
             flex-direction: column;
+            gap: 8px;
+        }
+
+        .exercise-error {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .workout-actions button {
+            color: var(--text-primary);
+            height: 36px;
+            box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+            background: transparent;
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
         }
     </style>
 </head>
 <body>
-<form th:action="@{'/workout/save'}" method="post" th:object="${workout}">
-    <input type="hidden" th:field="*{id}">
-    <input type="hidden" th:field="*{user}">
-    <div>
-        <label for="name">Name</label>
-        <input id="name" type="text" th:field="*{name}" />
-        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span><br>
-    </div>
-    <div class="exercise" th:each="exerciseWorkout, iStat : ${workout.exerciseWorkouts}">
-        <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].id}" />
-        <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].index}" th:value="${iStat.index}" />
-        <select th:id="${'exerciseWorkouts[' + iStat.index + '].exercise.id'}" th:name="${'exerciseWorkouts[' + iStat.index + '].exercise.id'}">
-            <option selected disabled value="">Select Exercise</option>
-            <option th:each="exercise : ${existingExercises}"
-                    th:value="${exercise.id}"
-                    th:text="${exercise.name}"
-                    th:selected="${exercise.id == exerciseWorkout.exercise.id}">
-            </option>
-        </select>
-        <input type="number" th:field="*{exerciseWorkouts[__${iStat.index}__].sets}" min="1" />
-        <button type="button" th:onclick="|removeExercise(${iStat.index}, '${edit}');|">Remove</button>
-        <div>
-            <span th:if="${#fields.hasErrors('exerciseWorkouts[' + iStat.index + '].exercise')}" th:errors="*{exerciseWorkouts[__${iStat.index}__].exercise}"></span>
-            <span th:if="${#fields.hasErrors('exerciseWorkouts[' + iStat.index + '].sets')}" th:errors="*{exerciseWorkouts[__${iStat.index}__].sets}"></span>
+<div class="card">
+    <div class="header">
+        <h2 th:text="${edit ? 'Edit Workout' : 'Create Workout'}"></h2>
+        <div class="actions">
+            <a href="/workouts" class="back"></a>
         </div>
     </div>
-    <button type="button" th:onclick="|createExercise('${edit}');|">Create Exercise</button>
-    <button type="button" th:onclick="|addExercise('${edit}');|">Add Exercise</button>
-    <input type="submit" value="Save" />
-</form>
+    <form th:action="@{'/workout/save'}" method="post" th:object="${workout}">
+        <input type="hidden" th:field="*{id}">
+        <input type="hidden" th:field="*{user}">
+        <label for="name">Workout name</label>
+        <input id="name" type="text" th:field="*{name}" placeholder="Workout name" />
+        <span class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+        <div class="exercise-error" th:each="exerciseWorkout, iStat : ${workout.exerciseWorkouts}">
+            <div class="exercise">
+                <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].id}" />
+                <input type="hidden" th:field="*{exerciseWorkouts[__${iStat.index}__].index}" th:value="${iStat.index}" />
+                <select th:id="${'exerciseWorkouts[' + iStat.index + '].exercise.id'}" th:name="${'exerciseWorkouts[' + iStat.index + '].exercise.id'}">
+                    <option selected disabled value="">Select Exercise</option>
+                    <option th:each="exercise : ${existingExercises}"
+                            th:value="${exercise.id}"
+                            th:text="${exercise.name}"
+                            th:selected="${exercise.id == exerciseWorkout.exercise.id}">
+                    </option>
+                </select>
+                <input type="number" th:field="*{exerciseWorkouts[__${iStat.index}__].sets}" min="1" placeholder="Number of reps" />
+                <button class="delete" type="button" th:onclick="|removeExercise(${iStat.index}, '${edit}');|"></button>
+            </div>
+            <div class="errors" th:if="${#fields.hasErrors('exerciseWorkouts[' + iStat.index + '].exercise') || #fields.hasErrors('exerciseWorkouts[' + iStat.index + '].sets')}" >
+                <span class="error" th:if="${#fields.hasErrors('exerciseWorkouts[' + iStat.index + '].exercise')}" th:errors="*{exerciseWorkouts[__${iStat.index}__].exercise}"></span>
+                <span class="error" th:if="${#fields.hasErrors('exerciseWorkouts[' + iStat.index + '].sets')}" th:errors="*{exerciseWorkouts[__${iStat.index}__].sets}"></span>
+            </div>
+        </div>
+        <div class="workout-actions">
+            <button type="button" th:onclick="|addExercise('${edit}');|">
+                <span>Add exercise</span>
+                <img src="/icons/icon-add-dark.svg" alt="Add exercise" />
+            </button>
+            <button type="button" th:onclick="|createExercise('${edit}');|">
+                <span>Create exercise</span>
+                <img src="/icons/icon-create-new-exercise.svg" alt="Create exercise" />
+            </button>
+        </div>
+        <input type="submit" value="Save" />
+    </form>
+</div>
 </body>
 </html>
 

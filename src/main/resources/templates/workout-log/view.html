@@ -3,18 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${workoutLog.workoutName}"></title>
+    <link rel="stylesheet" href="/styles.css" type="text/css">
+    <style>
+        .card {
+            gap: 8px;
+        }
+
+        .card .header {
+            margin-bottom: 12px;
+        }
+
+        .exercise {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 8px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-primary);
+        }
+
+        .exercise:last-of-type {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .exercise-name {
+            font-size: 16px;
+            color: var(--bg-accent);
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-spacing: 12px;
+        }
+
+        tr td:first-of-type {
+            padding-right: 20px;
+        }
+
+        th {
+            color: var(--text-primary);
+            text-align: left;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-<div>
-    <h2 th:text="${workoutLog.workoutName}"></h2>
-    <div class="exercise" th:each="exerciseLog : ${workoutLog.exerciseLogs}">
-        <h3 th:text="${exerciseLog.exerciseName}"></h3>
-        
-        <div th:each="setLog : ${exerciseLog.setLogs}">
-            <span th:text="${setLog.setOrder + 1}"></span>
-            <span th:text="${setLog.repetitions}"></span>
-            <span th:text="${setLog.weight}"></span>
+<div class="card">
+    <div class="header">
+        <h2 th:text="${workoutLog.workoutName}"></h2>
+        <div class="actions">
+            <a href="/" class="back"></a>
         </div>
+    </div>
+    <div class="exercise" th:each="exerciseLog : ${workoutLog.exerciseLogs}">
+        <span class="exercise-name" th:text="${exerciseLog.exerciseName}"></span>
+        <table>
+            <thead>
+                <tr>
+                    <th>Set</th>
+                    <th>Repetitions</th>
+                    <th>Weight</th>
+                </tr>
+            </thead>
+            <tr th:each="setLog : ${exerciseLog.setLogs}">
+                <td th:text="${setLog.setOrder + 1}"></td>
+                <td th:text="${setLog.repetitions}"></td>
+                <td th:text="${setLog.weight}"></td>
+            </tr>
+        </table>
     </div>
 </div>
 </body>

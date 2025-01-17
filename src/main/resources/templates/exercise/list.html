@@ -3,24 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>Manage Exercises</title>
+    <link rel="stylesheet" href="/styles.css" type="text/css">
     <style>
-        .disabled {
-            pointer-events: none;
-            color: grey;
+        li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-primary);
+        }
+
+        .exercise-name {
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-<div>
-    <span>Manage Workouts</span>
-    <a th:href="@{'/exercise/create'}">Create Exercise</a>
+<div class="card">
+    <div class="header">
+        <h2>Manage Exercises</h2>
+        <div class="actions">
+            <a class="back" th:href="@{'/'}"></a>
+            <a class="add" th:href="@{'/exercise/create'}"></a>
+        </div>
+    </div>
+    <ul>
+        <li th:each="exercise : ${exercises}">
+            <span class="exercise-name" th:text="${exercise.name}"></span>
+            <div class="actions">
+                <a class="edit" th:href="@{'/exercise/edit/' + ${exercise.id}}"></a>
+                <a th:href="@{'/exercise/delete/' + ${exercise.id}}" th:class="${usedExercises.contains(exercise) ? 'disabled delete' : 'delete'}"></a>
+            </div>
+        </li>
+    </ul>
 </div>
-<ul>
-    <li th:each="exercise : ${exercises}">
-        <span th:text="${exercise.name}"></span>
-        <a th:href="@{'/exercise/edit/' + ${exercise.id}}">Edit</a>
-        <a th:href="@{'/exercise/delete/' + ${exercise.id}}" th:class="${usedExercises.contains(exercise) ? 'disabled' : ''}">Delete</a>
-    </li>
-</ul>
 </body>
 </html>

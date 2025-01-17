@@ -93,6 +93,12 @@ public class WorkoutController {
 
         workout.addEmptyExerciseWorkout();
 
+        workout.getExerciseWorkouts().forEach(exerciseWorkout -> {
+            if (exerciseWorkout.getExercise() == null) {
+                exerciseWorkout.setExercise(new Exercise());
+            }
+        });
+
         redirectAttributes.addFlashAttribute("workout", workout);
 
         if (edit) {
@@ -113,6 +119,12 @@ public class WorkoutController {
         }
 
         workout.removeExerciseWorkout(index);
+
+        workout.getExerciseWorkouts().forEach(exerciseWorkout -> {
+            if (exerciseWorkout.getExercise() == null) {
+                exerciseWorkout.setExercise(new Exercise());
+            }
+        });
 
         redirectAttributes.addFlashAttribute("workout", workout);
 
